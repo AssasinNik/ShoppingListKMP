@@ -66,25 +66,25 @@ private fun ShoppingListsScreen(
     LaunchedEffect(state.listItems){
         lazyListState.animateScrollToItem(0)
     }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
             .statusBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
+        Spacer(modifier = Modifier.height(15.dp))
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 16.dp, start = 16.dp, end = 16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.Start
         ) {
             Text(
                 text = "Hi 👋",
                 style = TextStyle(
-                    fontSize = 48.sp,
+                    fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
@@ -93,7 +93,7 @@ private fun ShoppingListsScreen(
             Text(
                 text = "These are your shopping lists!",
                 style = TextStyle(
-                    fontSize = 24.sp,
+                    fontSize = 25.sp,
                     fontWeight = FontWeight.Medium,
                     color = Color.Black
                 )
@@ -107,8 +107,9 @@ private fun ShoppingListsScreen(
                     color = Red
                 )
             )
-            Spacer(modifier = Modifier.height(32.dp))
         }
+
+        Spacer(modifier = Modifier.height(28.dp))
         Surface(
             modifier = Modifier
                 .weight(1f)
@@ -119,43 +120,13 @@ private fun ShoppingListsScreen(
                 topEnd = 32.dp
             )
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ){
-                    if (state.isLoading){
-                        CircularProgressIndicator()
-                    } else{
-                        when{
-                            state.errorMessage != null -> {
-                                Text(
-                                    text = state.errorMessage.asString(),
-                                    textAlign = TextAlign.Center,
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    color = MaterialTheme.colorScheme.error
-                                )
-                            }
-                            else -> {
-                                ShoppingLazyList(
-                                    lists = state.listItems,
-                                    onListClick = {
-                                        onAction(ShoppingListAction.OnListClick(it))
-                                    },
-                                    onRemoveClick = {
-                                        onAction(ShoppingListAction.OnRemoveListClick(it))
-                                    },
-                                    modifier = Modifier.fillMaxSize(),
-                                    scrollState = lazyListState
-                                )
-                            }
-                        }
-                    }
-                }
-            }
+            ShoppingLazyList(
+                lists = state.listItems,
+                onListClick = { onAction(ShoppingListAction.OnListClick(it)) },
+                onRemoveClick = { onAction(ShoppingListAction.OnRemoveListClick(it)) },
+                modifier = Modifier.fillMaxSize(),
+                scrollState = lazyListState
+            )
         }
     }
 }

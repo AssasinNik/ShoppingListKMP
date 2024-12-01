@@ -43,7 +43,7 @@ fun ListItem(
         shape = RoundedCornerShape(32.dp),
         modifier = modifier
             .clickable(onClick = onListClick),
-        color = Color.White.copy(alpha = 0.2f)
+        color = Color.White
     ) {
         Row(
             modifier = Modifier
