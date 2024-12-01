@@ -1,4 +1,4 @@
-package com.cherenkov.shoppinglist.shopping.presentation.shopping_list
+package com.cherenkov.shoppinglist.shopping.presentation.shopping_lists
 
 import com.cherenkov.shoppinglist.core.presentation.UiText
 import com.cherenkov.shoppinglist.shopping.domain.ShoppingList
