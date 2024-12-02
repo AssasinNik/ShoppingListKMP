@@ -29,7 +29,8 @@ fun AddButton(
     onClick: () -> Unit,
     text: String,
     color: Color,
-    icon: ImageVector?
+    icon: ImageVector?,
+    modifier: Modifier = Modifier
 ){
     Button(
         onClick = { onClick() },
@@ -38,7 +39,7 @@ fun AddButton(
             contentColor = Color.White
         ),
         shape = MaterialTheme.shapes.medium,
-        modifier = Modifier
+        modifier = modifier
             .padding(16.dp)
             .height(48.dp)
     ) {

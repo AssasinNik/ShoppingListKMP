@@ -4,6 +4,5 @@ data class ProductItem(
     val created: String,
     val name: String,
     val id: Int,
-    val isCrossed: Boolean,
     val isChecked: Boolean
 )

@@ -8,9 +8,8 @@ fun UsersListItemsDTO.toProductItems(): List<ProductItem>{
         ProductItem(
             id = item.id,
             name = item.name,
-            isCrossed = item.is_crossed,
-            created = item.created,
-            isChecked = false
+            isChecked = item.is_crossed,
+            created = item.created
         )
     }
 }

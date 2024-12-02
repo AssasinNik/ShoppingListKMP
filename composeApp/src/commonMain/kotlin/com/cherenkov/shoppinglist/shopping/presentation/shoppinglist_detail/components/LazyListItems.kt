@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.cherenkov.shoppinglist.shopping.domain.ProductItem
 import com.cherenkov.shoppinglist.shopping.presentation.shoppinglist_detail.ShoppingListDetailAction
-import com.cherenkov.shoppinglist.shopping.presentation.shoppinglist_detail.ShoppingListDetailViewModel
 
 @Composable
 fun LazyListItems(
