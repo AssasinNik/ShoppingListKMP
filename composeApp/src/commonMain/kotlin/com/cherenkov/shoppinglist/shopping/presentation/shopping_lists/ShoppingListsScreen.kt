@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -26,7 +27,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,12 +34,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cherenkov.shoppinglist.core.presentation.BackGround
-import com.cherenkov.shoppinglist.core.presentation.BackGroundItems
 import com.cherenkov.shoppinglist.core.presentation.Buttons
 import com.cherenkov.shoppinglist.core.presentation.HeaderColor
 import com.cherenkov.shoppinglist.core.presentation.UiText
 import com.cherenkov.shoppinglist.shopping.domain.ShoppingList
-import com.cherenkov.shoppinglist.shopping.presentation.shopping_lists.components.AddListButton
+import com.cherenkov.shoppinglist.shopping.presentation.reusable_components.AddButton
 import com.cherenkov.shoppinglist.shopping.presentation.shopping_lists.components.ShoppingLazyList
 import org.koin.compose.viewmodel.koinViewModel
 import shoppinglist.composeapp.generated.resources.Res
@@ -74,9 +73,6 @@ private fun ShoppingListsScreen(
 
     val lazyListState = rememberLazyListState()
 
-    LaunchedEffect(state.listItems){
-        lazyListState.animateScrollToItem(0)
-    }
     Spacer(modifier = Modifier.height(15.dp))
     Column(
         modifier = Modifier
@@ -168,10 +164,13 @@ private fun ShoppingListsScreen(
                                         color = BackGround
                                     )
                                 )
-                                AddListButton(
+                                AddButton(
                                     onClick = {
                                         onAction(ShoppingListAction.OnAddListClick)
-                                    }
+                                    },
+                                    color = BackGround,
+                                    icon = Icons.Filled.Add,
+                                    text = "Create"
                                 )
                             }
                         }

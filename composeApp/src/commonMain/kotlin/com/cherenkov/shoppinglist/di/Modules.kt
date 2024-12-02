@@ -7,6 +7,7 @@ import com.cherenkov.shoppinglist.shopping.data.repository.DefaultShoppingReposi
 import com.cherenkov.shoppinglist.shopping.domain.ShoppingRepository
 import com.cherenkov.shoppinglist.shopping.presentation.SelectedListViewModel
 import com.cherenkov.shoppinglist.shopping.presentation.shopping_lists.ShoppingListsViewModel
+import com.cherenkov.shoppinglist.shopping.presentation.shoppinglist_detail.ShoppingListDetailViewModel
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -22,4 +23,5 @@ val sharedModule = module {
 
     viewModelOf(::ShoppingListsViewModel)
     viewModelOf(::SelectedListViewModel)
+    viewModelOf(::ShoppingListDetailViewModel)
 }

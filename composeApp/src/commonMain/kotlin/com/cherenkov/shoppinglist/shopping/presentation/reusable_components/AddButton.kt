@@ -1,4 +1,4 @@
-package com.cherenkov.shoppinglist.shopping.presentation.shopping_lists.components
+package com.cherenkov.shoppinglist.shopping.presentation.reusable_components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -18,19 +18,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cherenkov.shoppinglist.core.presentation.BackGround
 
 @Composable
-fun AddListButton(
-    onClick: () -> Unit
+fun AddButton(
+    onClick: () -> Unit,
+    text: String,
+    color: Color,
+    icon: ImageVector?
 ){
     Button(
         onClick = { onClick() },
         colors = ButtonDefaults.buttonColors(
-            containerColor = BackGround,
+            containerColor = color,
             contentColor = Color.White
         ),
         shape = MaterialTheme.shapes.medium,
@@ -42,14 +46,16 @@ fun AddListButton(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Create",
-                modifier = Modifier.size(18.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
+            if (icon != null) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = "Create",
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+            }
             Text(
-                text = "Create",
+                text = text,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
