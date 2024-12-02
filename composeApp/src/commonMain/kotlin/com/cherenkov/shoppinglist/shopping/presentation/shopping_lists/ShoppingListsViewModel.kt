@@ -38,6 +38,9 @@ class ShoppingListsViewModel(
             is ShoppingListAction.OnRemoveListClick -> {
 
             }
+            is ShoppingListAction.OnAddListClick -> {
+
+            }
         }
     }
 

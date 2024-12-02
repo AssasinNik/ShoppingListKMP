@@ -29,7 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.cherenkov.shoppinglist.core.presentation.Gray
+import com.cherenkov.shoppinglist.core.presentation.BackGroundBox
+import com.cherenkov.shoppinglist.core.presentation.BackGroundItems
 import com.cherenkov.shoppinglist.shopping.domain.ShoppingList
 
 @Composable
@@ -43,7 +44,7 @@ fun ListItem(
         shape = RoundedCornerShape(32.dp),
         modifier = modifier
             .clickable(onClick = onListClick),
-        color = Color.White
+        color = BackGroundBox
     ) {
         Row(
             modifier = Modifier
@@ -61,9 +62,9 @@ fun ListItem(
                 Icon(
                     imageVector = Icons.Default.ShoppingCart,
                     contentDescription = "Shopping Cart",
-                    tint = Color.Black,
+                    tint = BackGroundItems,
                     modifier = Modifier
-                        .size(25.dp)
+                        .size(35.dp)
                         .aspectRatio(
                             ratio = 0.65f,
                             matchHeightConstraintsFirst = true
@@ -80,13 +81,15 @@ fun ListItem(
                     text = list.name,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color.White
                 )
                 Text(
                     text = list.date,
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color.White
                 )
             }
             IconButton(
@@ -101,7 +104,7 @@ fun ListItem(
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete list",
-                    tint = Gray,
+                    tint = BackGroundItems,
                     modifier = Modifier.size(24.dp)
                 )
             }

@@ -1,17 +1,16 @@
 package com.cherenkov.shoppinglist
 
-import androidx.compose.runtime.remember
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import io.ktor.client.engine.okhttp.OkHttp
+import com.cherenkov.shoppinglist.app.App
+import com.cherenkov.shoppinglist.di.initKoin
 
 fun main() = application {
+    initKoin()
     Window(
         onCloseRequest = ::exitApplication,
         title = "ShoppingList",
     ) {
-        App(
-            engine = remember { OkHttp.create() }
-        )
+        App()
     }
 }
