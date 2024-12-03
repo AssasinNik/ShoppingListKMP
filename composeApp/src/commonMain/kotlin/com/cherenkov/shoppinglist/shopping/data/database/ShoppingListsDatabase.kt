@@ -1,5 +1,6 @@
 package com.cherenkov.shoppinglist.shopping.data.database
 
+import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
 
@@ -8,6 +9,7 @@ import androidx.room.RoomDatabase
     entities = [ProductItemEntity::class, ShoppingListEntity::class],
     version = 1
 )
+@ConstructedBy(ShoppingListsDatabseConstructor::class)
 abstract class ShoppingListsDatabase: RoomDatabase() {
     abstract val shoppingListDao:ShoppingListDao
 
