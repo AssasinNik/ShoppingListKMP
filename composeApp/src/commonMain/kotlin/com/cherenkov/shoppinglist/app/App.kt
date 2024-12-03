@@ -46,8 +46,12 @@ fun App() {
                     startDestination = Route.ShoppingLists
                 ){
                     composable<Route.ShoppingLists> (
-                        exitTransition = { slideOutHorizontally() },
-                        popEnterTransition = { slideInHorizontally() }
+                        exitTransition = { slideOutHorizontally{ initialOffset ->
+                            initialOffset
+                        } },
+                        popEnterTransition = { slideInHorizontally{ initialOffset ->
+                            initialOffset
+                        } }
                     ){
                         val viewModel = koinViewModel<ShoppingListsViewModel>()
                         val selectedListViewModel =

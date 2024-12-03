@@ -1,6 +1,9 @@
 package com.cherenkov.shoppinglist.di
 
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.cherenkov.shoppinglist.core.data.HttpClientFactory
+import com.cherenkov.shoppinglist.shopping.data.database.DatabaseFactory
+import com.cherenkov.shoppinglist.shopping.data.database.ShoppingListsDatabase
 import com.cherenkov.shoppinglist.shopping.data.network.KtorRemoteShoppingDataSource
 import com.cherenkov.shoppinglist.shopping.data.network.RemoteShoppingDataSource
 import com.cherenkov.shoppinglist.shopping.data.repository.DefaultShoppingRepository
@@ -20,6 +23,14 @@ val sharedModule = module {
     single { HttpClientFactory.create(get()) }
     singleOf(::KtorRemoteShoppingDataSource).bind<RemoteShoppingDataSource>()
     singleOf(::DefaultShoppingRepository).bind<ShoppingRepository>()
+
+    single{
+        get<DatabaseFactory>().create()
+            .setDriver(BundledSQLiteDriver())
+            .build()
+    }
+
+    single { get<ShoppingListsDatabase>().shoppingListDao }
 
     viewModelOf(::ShoppingListsViewModel)
     viewModelOf(::SelectedListViewModel)
