@@ -76,6 +76,17 @@ fun ShoppingListDetailScreen(
                         onAction = onAction,
                         lazyListState = lazyListState
                     )
+                    AddButton(
+                        onClick = {
+                            onAction(ShoppingListDetailAction.OnAddClick)
+                        },
+                        text = "Add item",
+                        color = Buttons,
+                        icon = Icons.Default.Add,
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(16.dp)
+                    )
                 } else {
                     EmptyListContent(
                         onAction = onAction,
@@ -83,17 +94,6 @@ fun ShoppingListDetailScreen(
                     )
                 }
             }
-            AddButton(
-                onClick = {
-                    onAction(ShoppingListDetailAction.OnAddClick)
-                },
-                text = "Add item",
-                color = Buttons,
-                icon = Icons.Default.Add,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(16.dp)
-            )
         }
     }
 }

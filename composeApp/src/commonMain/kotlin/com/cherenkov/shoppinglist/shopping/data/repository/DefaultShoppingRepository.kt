@@ -7,6 +7,7 @@ import com.cherenkov.shoppinglist.core.domain.Result
 import com.cherenkov.shoppinglist.core.domain.map
 import com.cherenkov.shoppinglist.core.domain.onSuccess
 import com.cherenkov.shoppinglist.shopping.data.database.ShoppingListDao
+import com.cherenkov.shoppinglist.shopping.data.dto.RemoveShoppingListDTO
 import com.cherenkov.shoppinglist.shopping.data.mappers.toProductItem
 import com.cherenkov.shoppinglist.shopping.data.mappers.toProductItems
 import com.cherenkov.shoppinglist.shopping.data.mappers.toShoppingList
@@ -90,5 +91,20 @@ class DefaultShoppingRepository(
         } catch (e: SQLiteException){
             Result.Error(DataError.Local.UNKNOWN)
         }
+    }
+
+    override suspend fun deleteShoppingList(shoppingList: ShoppingList): EmptyResult<DataError.Local> {
+        return try {
+            shoppingListDao.deleteShoppingList(shoppingList.toShoppingListEntity())
+            remoteShoppingDataSource.deleteShoppingLists(shoppingList.id)
+            Result.Success(Unit)
+        } catch (e: SQLiteException){
+            Result.Error(DataError.Local.UNKNOWN)
+        }
+    }
+
+    override suspend fun addShoppingList(name: String): Result<Boolean, DataError.Remote> {
+        remoteShoppingDataSource.addShoppingList(name)
+        return Result.Success(true)
     }
 }

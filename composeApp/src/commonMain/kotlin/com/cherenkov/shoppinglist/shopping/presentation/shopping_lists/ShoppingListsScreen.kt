@@ -17,16 +17,28 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,6 +46,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cherenkov.shoppinglist.core.presentation.BackGround
+import com.cherenkov.shoppinglist.core.presentation.BackGroundBox
+import com.cherenkov.shoppinglist.core.presentation.BackGroundItems
 import com.cherenkov.shoppinglist.core.presentation.Buttons
 import com.cherenkov.shoppinglist.core.presentation.HeaderColor
 import com.cherenkov.shoppinglist.core.presentation.UiText
@@ -66,117 +80,223 @@ fun ShoppingListsScreenRoot(
 }
 
 @Composable
-private fun ShoppingListsScreen(
+fun ShoppingListsScreen(
     state: ShoppingListState,
     onAction: (ShoppingListAction) -> Unit
-){
-
+) {
     val lazyListState = rememberLazyListState()
 
-    Spacer(modifier = Modifier.height(15.dp))
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BackGround)
-            .statusBarsPadding(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(70.dp))
+    Scaffold(
+        floatingActionButton = {
+            if (state.listItems.isNotEmpty()) {
+                FloatingActionButton(
+                    onClick = { onAction(ShoppingListAction.OnFloatingButtonClick) },
+                    containerColor = Buttons,
+                    contentColor = Color.White
+                ) {
+                    Icon(Icons.Filled.Add, contentDescription = "Add List")
+                }
+            }
+        },
+        containerColor = BackGround
+    ) { innerPadding ->
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxSize()
+                .padding(innerPadding)
         ) {
             Text(
-                text = "Your shopping Lists",
-                style = TextStyle(
-                    fontSize = 25.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = HeaderColor
-                )
-            )
-        }
-        Spacer(modifier = Modifier.height(70.dp))
-        Surface(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            color = Buttons,
-            shape = RoundedCornerShape(
-                topStart = 32.dp,
-                topEnd = 32.dp
-            )
-        ) {
-
-            Box(
+                text = "Your Shopping Lists",
+                style = MaterialTheme.typography.titleLarge.copy(
+                    color = HeaderColor,
+                    fontWeight = FontWeight.Bold
+                ),
                 modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ){
-                if(state.isLoading){
-                    CircularProgressIndicator(
-                        color = BackGround
-                    )
-                }
-                else {
-                    if(state.errorMessage != null){
-                        Text(
-                            text = state.errorMessage.asString(),
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                    else{
-                        if (!state.listItems.isEmpty())
-                        ShoppingLazyList(
-                            lists = state.listItems,
-                            onListClick = { onAction(ShoppingListAction.OnListClick(it)) },
-                            onRemoveClick = { onAction(ShoppingListAction.OnRemoveListClick(it)) },
-                            modifier = Modifier.fillMaxSize(),
-                            scrollState = lazyListState
-                        )
-                        else{
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 10.dp),
-                                verticalArrangement = Arrangement.Top,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.ShoppingCart,
-                                    contentDescription = "Shopping Cart",
-                                    tint = BackGround,
-                                    modifier = Modifier
-                                        .size(115.dp)
-                                        .aspectRatio(
-                                            ratio = 0.65f,
-                                            matchHeightConstraintsFirst = true
-                                        )
-                                )
-                                Text(
-                                    text = UiText.StringResourceId(Res.string.no_shopping_lists).asString(),
-                                    style = TextStyle(
-                                        fontSize = 18.sp,
-                                        fontWeight = FontWeight.Light,
-                                        color = BackGround
-                                    )
-                                )
-                                AddButton(
-                                    onClick = {
-                                        onAction(ShoppingListAction.OnAddListClick)
-                                    },
-                                    color = BackGround,
-                                    icon = Icons.Filled.Add,
-                                    text = "Create"
-                                )
-                            }
+                    .padding(start = 16.dp, top = 16.dp)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Surface(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                color = BackGroundBox,
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    when {
+                        state.isLoading -> {
+                            CircularProgressIndicator(
+                                color = Buttons,
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
+                        state.errorMessage != null -> {
+                            Text(
+                                text = state.errorMessage.asString(),
+                                color = MaterialTheme.colorScheme.error,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
+                        state.listItems.isNotEmpty() -> {
+                            ShoppingLazyList(
+                                lists = state.listItems,
+                                onListClick = { onAction(ShoppingListAction.OnListClick(it)) },
+                                onRemoveClick = { onAction(ShoppingListAction.OnRemoveListClick(it)) },
+                                modifier = Modifier.fillMaxSize(),
+                                scrollState = lazyListState
+                            )
+                        }
+                        else -> {
+                            EmptyStatePlaceholder(
+                                onAddClick = { onAction(ShoppingListAction.OnFloatingButtonClick) }
+                            )
                         }
                     }
                 }
             }
+        }
+    }
+    if (state.showDialog) {
+        AddListDialog(
+            onDismiss = { onAction(ShoppingListAction.OnFloatingButtonClick) },
+            onSave = { listName ->
+                onAction(ShoppingListAction.OnAddListClick(listName))
+            }
+        )
+    }
+
+}
+
+@Composable
+fun AddListDialog(
+    onDismiss: () -> Unit,
+    onSave: (String) -> Unit
+) {
+    var listName by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = BackGroundBox, // Основной цвет для фона диалога
+        title = {
+            Text(
+                text = "New Shopping List",
+                style = MaterialTheme.typography.titleLarge.copy(
+                    color = HeaderColor, // Цвет заголовка
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        },
+        text = {
+            Column {
+                TextField(
+                    value = listName,
+                    onValueChange = { listName = it },
+                    label = { Text(
+                        text = "Name",
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Light,
+                            color = Color.Black
+                        )
+                    ) },
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedContainerColor = Color(0xFFF0F0F0),
+                        unfocusedContainerColor = Color(0xFFF0F0F0),
+                        cursorColor = HeaderColor,
+                        focusedLabelColor = HeaderColor,
+                        unfocusedLabelColor = Color.Gray,
+                    ),
+                    shape = RoundedCornerShape(8.dp),
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    if (listName.isNotBlank()) {
+                        onSave(listName)
+                        onDismiss()
+                    }
+                },
+                colors = ButtonDefaults.textButtonColors(contentColor = Buttons)
+            ) {
+                Text(
+                    text = "Save",
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Light
+                    )
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss,
+                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
+            ) {
+                Text(
+                    text = "Cancel",
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Light
+                    )
+                )
+            }
+        }
+    )
+}
+
+
+@Composable
+fun EmptyStatePlaceholder(onAddClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ){
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                imageVector = Icons.Default.ShoppingCart,
+                contentDescription = "Shopping Cart",
+                tint = HeaderColor,
+                modifier = Modifier
+                    .size(115.dp)
+                    .aspectRatio(
+                        ratio = 0.65f,
+                        matchHeightConstraintsFirst = true
+                    )
+            )
+            Text(
+                text = UiText.StringResourceId(Res.string.no_shopping_lists).asString(),
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Light,
+                    color = HeaderColor
+                )
+            )
+            AddButton(
+                onClick = {
+                    onAddClick()
+                },
+                color = Buttons,
+                icon = Icons.Filled.Add,
+                text = "Create"
+            )
         }
     }
 }
