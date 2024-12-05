@@ -3,8 +3,10 @@ package com.cherenkov.shoppinglist.shopping.presentation.shoppinglist_detail
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -28,6 +30,7 @@ import com.cherenkov.shoppinglist.core.presentation.Buttons
 import com.cherenkov.shoppinglist.shopping.presentation.reusable_components.AddButton
 import com.cherenkov.shoppinglist.shopping.presentation.reusable_components.TopBar
 import com.cherenkov.shoppinglist.shopping.presentation.shoppinglist_detail.components.LazyListItems
+import com.cherenkov.shoppinglist.shopping.presentation.shoppinglist_detail.components.TaskProgressCircle
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -121,6 +124,8 @@ fun ContentWithItems(
     onAction: (ShoppingListDetailAction) -> Unit,
     lazyListState: LazyListState
 ) {
+    val total = state.listItems.size
+    val completed = state.listItems.count { it?.isChecked ?: false }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -130,6 +135,17 @@ fun ContentWithItems(
             title = state.shoppingList?.name.orEmpty(),
             onBackClick = { onAction(ShoppingListDetailAction.OnBackClick) }
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        TaskProgressCircle(
+            total = total,
+            completed = completed,
+            circleSize = 80.dp,
+            strokeWidth = 8.dp
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         LazyListItems(
             lists = state.listItems,
