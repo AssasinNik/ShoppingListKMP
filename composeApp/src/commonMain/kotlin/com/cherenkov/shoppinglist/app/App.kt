@@ -21,6 +21,13 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.cherenkov.shoppinglist.core.presentation.BackGround
 import com.cherenkov.shoppinglist.shopping.presentation.SelectedListViewModel
+import com.cherenkov.shoppinglist.shopping.presentation.add_item.AddItemAction
+import com.cherenkov.shoppinglist.shopping.presentation.add_item.AddItemScreenRoot
+import com.cherenkov.shoppinglist.shopping.presentation.add_item.AddItemViewModel
+import com.cherenkov.shoppinglist.shopping.presentation.authentication.AuthenticationScreenRoot
+import com.cherenkov.shoppinglist.shopping.presentation.authentication.AuthenticationViewModel
+import com.cherenkov.shoppinglist.shopping.presentation.create_shopping_list.CreateShoppingScreenRoot
+import com.cherenkov.shoppinglist.shopping.presentation.create_shopping_list.CreateShoppingViewModel
 import com.cherenkov.shoppinglist.shopping.presentation.shopping_lists.ShoppingListsScreenRoot
 import com.cherenkov.shoppinglist.shopping.presentation.shopping_lists.ShoppingListsViewModel
 import com.cherenkov.shoppinglist.shopping.presentation.shoppinglist_detail.ShoppingListDetailAction
@@ -43,8 +50,27 @@ fun App() {
                 startDestination = Route.ShoppingGraph
             ){
                 navigation<Route.ShoppingGraph>(
-                    startDestination = Route.ShoppingLists
+                    startDestination = Route.Authentication
                 ){
+                    composable<Route.Authentication>(
+                        exitTransition = { slideOutHorizontally{ initialOffset ->
+                        initialOffset
+                    } },
+                        popEnterTransition = { slideInHorizontally{ initialOffset ->
+                            initialOffset
+                        } }
+                    ) {
+                        val viewModel = koinViewModel<AuthenticationViewModel>()
+                        AuthenticationScreenRoot(
+                            viewModel = viewModel,
+                            onSetCodeClick = {
+                                navController.navigate(
+                                    Route.ShoppingLists
+                                )
+                            }
+                        )
+                    }
+
                     composable<Route.ShoppingLists> (
                         exitTransition = { slideOutHorizontally{ initialOffset ->
                             initialOffset
@@ -60,7 +86,6 @@ fun App() {
                         LaunchedEffect(true) {
                             selectedListViewModel.onSelectList(null)
                         }
-
                         ShoppingListsScreenRoot(
                             viewModel = viewModel,
                             onListClick = { list ->
@@ -68,7 +93,11 @@ fun App() {
                                 navController.navigate(
                                     Route.ShoppingListDetail(list.id)
                                 )
-
+                            },
+                            onAddClick = {
+                                navController.navigate(
+                                    Route.CreateShopping
+                                )
                             }
                         )
                     }
@@ -99,7 +128,49 @@ fun App() {
                                 )
                             },
                             onAddClick = {
+                                navController.navigate(
+                                    Route.AddItem(selectedBook?.id ?: 0)
+                                )
+                            }
+                        )
+                    }
+                    composable<Route.CreateShopping>(
+                        enterTransition = { slideInHorizontally { initialOffset ->
+                            initialOffset
+                        } },
+                        exitTransition = { slideOutHorizontally { initialOffset ->
+                            initialOffset
+                        } }
+                    ) {
+                        val viewModel = koinViewModel<CreateShoppingViewModel>()
+                        CreateShoppingScreenRoot(
+                            viewModel = viewModel,
+                            onMoveClick = {
+                                navController.navigate(
+                                    Route.ShoppingLists
+                                )
+                            }
+                        )
+                    }
+                    composable<Route.AddItem>(
+                        enterTransition = { slideInHorizontally { initialOffset ->
+                            initialOffset
+                        } },
+                        exitTransition = { slideOutHorizontally { initialOffset ->
+                            initialOffset
+                        } }
+                    ) { entry ->
+                        val viewModel = koinViewModel<AddItemViewModel>()
+                        val selectedListViewModel =
+                            entry.sharedKoinViewModel<SelectedListViewModel>(navController)
+                        val selectedBook by selectedListViewModel.selectedList.collectAsStateWithLifecycle()
 
+                        AddItemScreenRoot(
+                            viewModel = viewModel,
+                            onMoveClick = {
+                                navController.navigate(
+                                    Route.ShoppingListDetail(selectedBook?.id ?: 0)
+                                )
                             }
                         )
                     }

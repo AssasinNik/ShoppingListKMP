@@ -6,6 +6,5 @@ import com.cherenkov.shoppinglist.shopping.domain.ShoppingList
 data class ShoppingListState(
     val listItems: List<ShoppingList> = emptyList(),
     val isLoading: Boolean = false,
-    val errorMessage: UiText? = null,
-    val showDialog: Boolean = false
+    val errorMessage: UiText? = null
 )

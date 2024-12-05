@@ -6,8 +6,8 @@ import androidx.room.RoomDatabase
 
 
 @Database(
-    entities = [ProductItemEntity::class, ShoppingListEntity::class],
-    version = 1
+    entities = [ProductItemEntity::class, ShoppingListEntity::class, UserEntity::class],
+    version = 3
 )
 @ConstructedBy(ShoppingListsDatabseConstructor::class)
 abstract class ShoppingListsDatabase: RoomDatabase() {

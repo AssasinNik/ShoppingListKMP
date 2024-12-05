@@ -19,6 +19,12 @@ interface ShoppingListDao {
     @Query("SELECT * FROM shopping_list")
     fun getAllShoppingLists(): Flow<List<ShoppingListEntity>>
 
+    @Query("SELECT * FROM user LIMIT 1")
+    suspend fun getAuthCode(): UserEntity
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAuthCode(userEntity: UserEntity)
+
     @Query("SELECT * FROM product_item WHERE shopping_list_id = :shoppingListId")
     fun getProductsByShoppingListId(shoppingListId: Int): Flow<List<ProductItemEntity>>
 

@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 1,
-    "identityHash": "6df6be8a7759ed2e2eb188cb85b73c69",
+    "version": 3,
+    "identityHash": "4c23f93277041d1b59f2c9a30f583210",
     "entities": [
       {
         "tableName": "product_item",
@@ -87,11 +87,35 @@
             "id"
           ]
         }
+      },
+      {
+        "tableName": "user",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `code` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "code",
+            "columnName": "code",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6df6be8a7759ed2e2eb188cb85b73c69')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4c23f93277041d1b59f2c9a30f583210')"
     ]
   }
 }

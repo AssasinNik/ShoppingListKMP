@@ -39,13 +39,8 @@ class ShoppingListsViewModel(
             is ShoppingListAction.OnRemoveListClick -> {
                 removeList(action.shoppingList)
             }
-            is ShoppingListAction.OnAddListClick -> {
-                addList(action.listName)
-            }
             is ShoppingListAction.OnFloatingButtonClick -> {
-                _state.update { it.copy(
-                    showDialog = !it.showDialog
-                ) }
+
             }
             else -> Unit
         }
@@ -57,7 +52,7 @@ class ShoppingListsViewModel(
                 isLoading = true
             ) }
             repository
-                .searchShoppings(key)
+                .searchShoppings()
                 .onSuccess { searchShoppings ->
                     _state.update { it.copy(
                         isLoading = false,
@@ -84,21 +79,6 @@ class ShoppingListsViewModel(
                         listItems = listShopping.listItems.filter { it.id != list.id }
                     )
                 } }
-        }
-    }
-
-    private fun addList(name: String){
-        viewModelScope.launch(Dispatchers.IO) {
-            repository
-                .addShoppingList(name)
-                .onSuccess {
-                    searchShoppings("92EGHS")
-                }
-                .onError { error ->
-                    _state.update { it.copy(
-                        errorMessage = error.toUiText()
-                    ) }
-                }
         }
     }
 

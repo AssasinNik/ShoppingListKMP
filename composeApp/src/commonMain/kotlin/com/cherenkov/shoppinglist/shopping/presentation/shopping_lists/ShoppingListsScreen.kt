@@ -62,7 +62,8 @@ import shoppinglist.composeapp.generated.resources.no_shopping_lists
 @Composable
 fun ShoppingListsScreenRoot(
     viewModel: ShoppingListsViewModel = koinViewModel(),
-    onListClick: (ShoppingList) -> Unit
+    onListClick: (ShoppingList) -> Unit,
+    onAddClick: () -> Unit
 ){
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -71,6 +72,7 @@ fun ShoppingListsScreenRoot(
         onAction = { action ->
             when(action){
                 is ShoppingListAction.OnListClick -> onListClick(action.shoppingList)
+                is ShoppingListAction.OnFloatingButtonClick -> onAddClick()
                 else -> Unit
             }
             viewModel.onAction(action)
@@ -159,100 +161,7 @@ fun ShoppingListsScreen(
             }
         }
     }
-    if (state.showDialog) {
-        AddListDialog(
-            onDismiss = { onAction(ShoppingListAction.OnFloatingButtonClick) },
-            onSave = { listName ->
-                onAction(ShoppingListAction.OnAddListClick(listName))
-            }
-        )
-    }
 
-}
-
-@Composable
-fun AddListDialog(
-    onDismiss: () -> Unit,
-    onSave: (String) -> Unit
-) {
-    var listName by remember { mutableStateOf("") }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        containerColor = BackGroundBox, // Основной цвет для фона диалога
-        title = {
-            Text(
-                text = "New Shopping List",
-                style = MaterialTheme.typography.titleLarge.copy(
-                    color = HeaderColor, // Цвет заголовка
-                    fontWeight = FontWeight.Bold
-                )
-            )
-        },
-        text = {
-            Column {
-                TextField(
-                    value = listName,
-                    onValueChange = { listName = it },
-                    label = { Text(
-                        text = "Name",
-                        style = TextStyle(
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Light,
-                            color = Color.Black
-                        )
-                    ) },
-                    singleLine = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    colors = TextFieldDefaults.colors(
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        focusedContainerColor = Color(0xFFF0F0F0),
-                        unfocusedContainerColor = Color(0xFFF0F0F0),
-                        cursorColor = HeaderColor,
-                        focusedLabelColor = HeaderColor,
-                        unfocusedLabelColor = Color.Gray,
-                    ),
-                    shape = RoundedCornerShape(8.dp),
-                )
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    if (listName.isNotBlank()) {
-                        onSave(listName)
-                        onDismiss()
-                    }
-                },
-                colors = ButtonDefaults.textButtonColors(contentColor = Buttons)
-            ) {
-                Text(
-                    text = "Save",
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Light
-                    )
-                )
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = onDismiss,
-                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
-            ) {
-                Text(
-                    text = "Cancel",
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Light
-                    )
-                )
-            }
-        }
-    )
 }
 
 

@@ -9,6 +9,9 @@ import com.cherenkov.shoppinglist.shopping.data.network.RemoteShoppingDataSource
 import com.cherenkov.shoppinglist.shopping.data.repository.DefaultShoppingRepository
 import com.cherenkov.shoppinglist.shopping.domain.ShoppingRepository
 import com.cherenkov.shoppinglist.shopping.presentation.SelectedListViewModel
+import com.cherenkov.shoppinglist.shopping.presentation.add_item.AddItemViewModel
+import com.cherenkov.shoppinglist.shopping.presentation.authentication.AuthenticationViewModel
+import com.cherenkov.shoppinglist.shopping.presentation.create_shopping_list.CreateShoppingViewModel
 import com.cherenkov.shoppinglist.shopping.presentation.shopping_lists.ShoppingListsViewModel
 import com.cherenkov.shoppinglist.shopping.presentation.shoppinglist_detail.ShoppingListDetailViewModel
 import org.koin.core.module.Module
@@ -32,7 +35,10 @@ val sharedModule = module {
 
     single { get<ShoppingListsDatabase>().shoppingListDao }
 
+    viewModelOf(::CreateShoppingViewModel)
     viewModelOf(::ShoppingListsViewModel)
+    viewModelOf(::AuthenticationViewModel)
     viewModelOf(::SelectedListViewModel)
     viewModelOf(::ShoppingListDetailViewModel)
+    viewModelOf(::AddItemViewModel)
 }

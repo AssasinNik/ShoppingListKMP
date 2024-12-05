@@ -5,8 +5,10 @@ import com.cherenkov.shoppinglist.core.domain.DataError
 import com.cherenkov.shoppinglist.core.domain.EmptyResult
 import com.cherenkov.shoppinglist.core.domain.Result
 import com.cherenkov.shoppinglist.core.domain.map
+import com.cherenkov.shoppinglist.core.domain.onError
 import com.cherenkov.shoppinglist.core.domain.onSuccess
 import com.cherenkov.shoppinglist.shopping.data.database.ShoppingListDao
+import com.cherenkov.shoppinglist.shopping.data.database.UserEntity
 import com.cherenkov.shoppinglist.shopping.data.dto.RemoveShoppingListDTO
 import com.cherenkov.shoppinglist.shopping.data.mappers.toProductItem
 import com.cherenkov.shoppinglist.shopping.data.mappers.toProductItems
@@ -25,46 +27,21 @@ class DefaultShoppingRepository(
     private val shoppingListDao: ShoppingListDao
 ) : ShoppingRepository{
 
-    override suspend fun searchShoppings(key: String): Result<List<ShoppingList>, DataError.Remote>{
-        val remoteLists = shoppingListDao.getAllShoppingLists()
-        return remoteLists.firstOrNull()?.let { list1 ->
-            if (list1.isEmpty()){
-                val lists = remoteShoppingDataSource
-                    .searchShoppings(key)
-                    .map { dto ->
-                        dto.toShoppingList()
-                    }
-                val result = lists.map { list ->
-                    list.map { it.toShoppingListEntity() }
-                }
-                result.onSuccess { list ->
-                    list.map {
-                        shoppingListDao.insertShoppingList(it)
-                    }
-                }
-                return lists
+    override suspend fun searchShoppings(): Result<List<ShoppingList>, DataError.Remote>{
+        val key = shoppingListDao.getAuthCode().code
+        return remoteShoppingDataSource
+            .searchShoppings(key)
+            .map { dto ->
+                dto.toShoppingList()
             }
-            else{
-                return Result.Success(list1.map { it.toShoppingList() })
-            }
-        } ?: Result.Error(DataError.Remote.UNKNOWN)
     }
 
     override suspend fun searchItemsForList(id: Int): Result<List<ProductItem>, DataError.Remote> {
-        val localResult = shoppingListDao.getProductsByShoppingListId(id)
-
-        return localResult.firstOrNull()?.let { list ->
-            if (list.isEmpty()) {
-                remoteShoppingDataSource
-                    .searchItemsForList(id)
-                    .map { dto ->
-                        dto.toProductItems()
-                    }
-            } else {
-                Result.Success(list.map { it.toProductItem() })
+        return remoteShoppingDataSource
+            .searchItemsForList(id)
+            .map { dto ->
+                dto.toProductItems()
             }
-        } ?: Result.Error(DataError.Remote.UNKNOWN)
-
     }
 
     override suspend fun getShoppingsFromLocal(): Flow<List<ShoppingList>> {
@@ -104,7 +81,38 @@ class DefaultShoppingRepository(
     }
 
     override suspend fun addShoppingList(name: String): Result<Boolean, DataError.Remote> {
-        remoteShoppingDataSource.addShoppingList(name)
+        val key = shoppingListDao.getAuthCode().code
+        remoteShoppingDataSource.addShoppingList(name, key)
         return Result.Success(true)
+    }
+
+    override suspend fun additemToList(
+        list_id: Int,
+        name: String,
+        n: Int
+    ): Result<Boolean, DataError.Remote> {
+        remoteShoppingDataSource.addItemtoList(list_id,name,n).map {
+            if (it.success){
+                return Result.Success(true)
+            }
+            else{
+                return Result.Error(DataError.Remote.UNKNOWN)
+            }
+        }
+        return Result.Error(DataError.Remote.UNKNOWN)
+    }
+
+    override suspend fun authenticateUser(key: String): Result<Boolean, DataError.Remote> {
+        remoteShoppingDataSource.authenticateWithKey(key)
+            .map { list ->
+                if (list.success){
+                    shoppingListDao.insertAuthCode(UserEntity(0, key))
+                    return Result.Success(true)
+                }
+                else{
+                    return Result.Error(DataError.Remote.UNKNOWN)
+                }
+            }
+        return Result.Error(DataError.Remote.UNKNOWN)
     }
 }

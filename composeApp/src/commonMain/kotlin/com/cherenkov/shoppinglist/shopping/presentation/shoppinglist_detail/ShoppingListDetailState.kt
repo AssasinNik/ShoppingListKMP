@@ -10,4 +10,5 @@ data class ShoppingListDetailState(
     val shoppingList: ShoppingList? = null,
     val errorMessage: UiText? = null,
     val listItems: List<ProductItem?> = emptyList(),
+    val showDialog: Boolean = false
 )
