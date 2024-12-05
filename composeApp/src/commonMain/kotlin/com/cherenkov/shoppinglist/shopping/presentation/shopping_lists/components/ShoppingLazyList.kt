@@ -37,7 +37,6 @@ fun ShoppingLazyList(
     scrollState: LazyListState = rememberLazyListState()
 ) {
     if (lists.isEmpty()) {
-        // Placeholder для пустого списка
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -67,7 +66,7 @@ fun ShoppingLazyList(
         ) {
             items(
                 items = lists,
-                key = { it.id }
+                key = { list -> list.id }
             ) { list ->
                 ListItem(
                     list = list,

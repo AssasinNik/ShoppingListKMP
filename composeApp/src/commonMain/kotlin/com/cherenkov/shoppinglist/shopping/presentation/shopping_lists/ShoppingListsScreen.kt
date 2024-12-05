@@ -136,7 +136,7 @@ fun ShoppingListsScreen(
                         }
                         state.errorMessage != null -> {
                             Text(
-                                text = state.errorMessage.asString(),
+                                text = state.errorMessage,
                                 color = MaterialTheme.colorScheme.error,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.align(Alignment.Center)

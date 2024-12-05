@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cherenkov.shoppinglist.core.domain.onError
 import com.cherenkov.shoppinglist.core.domain.onSuccess
+import com.cherenkov.shoppinglist.core.presentation.UiText
 import com.cherenkov.shoppinglist.core.presentation.toUiText
 import com.cherenkov.shoppinglist.shopping.domain.ShoppingList
 import com.cherenkov.shoppinglist.shopping.domain.ShoppingRepository
@@ -13,6 +14,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -26,7 +28,7 @@ class ShoppingListsViewModel(
     private val _state = MutableStateFlow(ShoppingListState())
     val state = _state
         .onStart {
-            searchShoppings("92EGHS")
+            searchShoppings()
         }
         .stateIn(
             viewModelScope,
@@ -46,25 +48,17 @@ class ShoppingListsViewModel(
         }
     }
 
-    private fun searchShoppings(key:String){
+    private fun searchShoppings(){
         viewModelScope.launch {
-            _state.update{ it.copy(
-                isLoading = true
-            ) }
-            repository
-                .searchShoppings()
-                .onSuccess { searchShoppings ->
+            repository.getProductsStream()
+                .catch { e ->
                     _state.update { it.copy(
-                        isLoading = false,
-                        errorMessage = null,
-                        listItems = searchShoppings
+                        errorMessage = e.message
                     ) }
                 }
-                .onError { error ->
+                .collect{ lists ->
                     _state.update { it.copy(
-                        listItems = emptyList(),
-                        isLoading = false,
-                        errorMessage = error.toUiText()
+                        listItems = lists
                     ) }
                 }
         }

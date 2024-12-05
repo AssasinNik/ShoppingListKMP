@@ -18,14 +18,39 @@ import com.cherenkov.shoppinglist.shopping.data.network.RemoteShoppingDataSource
 import com.cherenkov.shoppinglist.shopping.domain.ProductItem
 import com.cherenkov.shoppinglist.shopping.domain.ShoppingList
 import com.cherenkov.shoppinglist.shopping.domain.ShoppingRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
 class DefaultShoppingRepository(
     private val remoteShoppingDataSource: RemoteShoppingDataSource,
     private val shoppingListDao: ShoppingListDao
 ) : ShoppingRepository{
+
+    override fun getProductsStream(): Flow<List<ShoppingList>> = flow {
+        var lastProducts: List<ShoppingList> = emptyList()
+        while (true) {
+            try {
+                val result: Result<List<ShoppingList>, DataError.Remote> = searchShoppings()
+                var currentProducts: List<ShoppingList>
+                result.onSuccess {
+                    currentProducts = it
+                    if (currentProducts != lastProducts) {
+                        emit(currentProducts)
+                        lastProducts = currentProducts
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            delay(5000)
+        }
+    }.flowOn(Dispatchers.IO)
 
     override suspend fun searchShoppings(): Result<List<ShoppingList>, DataError.Remote>{
         val key = shoppingListDao.getAuthCode().code
@@ -35,6 +60,26 @@ class DefaultShoppingRepository(
                 dto.toShoppingList()
             }
     }
+
+    override fun getItemsStream(id: Int): Flow<List<ProductItem>> = flow {
+        var lastItems: List<ProductItem> = emptyList()
+        while (true) {
+            try {
+                val result: Result<List<ProductItem>, DataError.Remote> = searchItemsForList(id)
+                var currentProducts: List<ProductItem>
+                result.onSuccess {
+                    currentProducts = it
+                    if (currentProducts != lastItems) {
+                        emit(currentProducts)
+                        lastItems = currentProducts
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            delay(5000)
+        }
+    }.flowOn(Dispatchers.IO)
 
     override suspend fun searchItemsForList(id: Int): Result<List<ProductItem>, DataError.Remote> {
         return remoteShoppingDataSource

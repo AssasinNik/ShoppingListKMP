@@ -14,6 +14,7 @@ import com.cherenkov.shoppinglist.shopping.presentation.shopping_lists.ShoppingL
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -71,23 +72,15 @@ class ShoppingListDetailViewModel(
 
     private fun searchItems(){
         viewModelScope.launch {
-            _state.update{ it.copy(
-                isLoading = true
-            ) }
-            repository
-                .searchItemsForList(listId)
-                .onSuccess { searchItems ->
+            repository.getItemsStream(listId)
+                .catch { e ->
                     _state.update { it.copy(
-                        isLoading = false,
-                        errorMessage = null,
-                        listItems = searchItems
+                        errorMessage = e.message
                     ) }
                 }
-                .onError { error ->
+                .collect{items ->
                     _state.update { it.copy(
-                        listItems = emptyList(),
-                        isLoading = false,
-                        errorMessage = error.toUiText()
+                        listItems = items
                     ) }
                 }
         }

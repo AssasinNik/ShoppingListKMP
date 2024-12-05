@@ -1,9 +1,15 @@
 package com.cherenkov.shoppinglist.shopping.presentation.shoppinglist_detail.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -15,7 +21,11 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,27 +39,38 @@ fun ShoppingListItem(
     item: ProductItem,
     onCheckedChange: () -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.DarkGray, RoundedCornerShape(8.dp))
-            .padding(horizontal = 16.dp, vertical = 12.dp)
-            .animateContentSize(animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+    var isVisible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        isVisible = true
+    }
+
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = fadeIn(animationSpec = tween(300)) + expandVertically(animationSpec = tween(300)),
+        exit = fadeOut(animationSpec = tween(300)) + shrinkVertically(animationSpec = tween(300))
     ) {
-        val animatedTextColor by animateColorAsState(
-            targetValue = if (item.isChecked) Color.Gray else Color.White
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.DarkGray, RoundedCornerShape(8.dp))
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .animateContentSize(animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            val animatedTextColor by animateColorAsState(
+                targetValue = if (item.isChecked) Color.Gray else Color.White
+            )
 
-        Text(
-            text = item.name,
-            color = animatedTextColor,
-            fontSize = 16.sp,
-            textDecoration = if (item.isChecked) TextDecoration.LineThrough else TextDecoration.None
-        )
+            Text(
+                text = item.name,
+                color = animatedTextColor,
+                fontSize = 16.sp,
+                textDecoration = if (item.isChecked) TextDecoration.LineThrough else TextDecoration.None
+            )
 
-        CustomCheckBox(isChecked = item.isChecked, onCheckedChange = onCheckedChange)
+            CustomCheckBox(isChecked = item.isChecked, onCheckedChange = onCheckedChange)
+        }
     }
 }
 

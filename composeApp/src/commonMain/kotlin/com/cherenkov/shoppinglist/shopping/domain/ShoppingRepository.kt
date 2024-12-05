@@ -11,6 +11,8 @@ interface ShoppingRepository {
     suspend fun addShoppingList(name: String): Result<Boolean, DataError.Remote>
     suspend fun authenticateUser(key: String): Result<Boolean, DataError.Remote>
     suspend fun additemToList(list_id: Int, name: String, n: Int): Result<Boolean, DataError.Remote>
+    fun getProductsStream(): Flow<List<ShoppingList>>
+    fun getItemsStream(id: Int): Flow<List<ProductItem>>
 
     suspend fun getShoppingsFromLocal(): Flow<List<ShoppingList>>
     suspend fun addShopping(shoppingList: ShoppingList): EmptyResult<DataError.Local>
