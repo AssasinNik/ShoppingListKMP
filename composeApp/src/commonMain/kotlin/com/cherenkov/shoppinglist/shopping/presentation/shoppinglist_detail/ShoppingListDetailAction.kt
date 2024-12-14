@@ -8,5 +8,6 @@ sealed interface ShoppingListDetailAction {
     data class OnCheckClick(val id: Int): ShoppingListDetailAction
     data object OnCompleteClick: ShoppingListDetailAction
     data object OnAddClick: ShoppingListDetailAction
+    data class OnRemoveClick(val item_id: Int): ShoppingListDetailAction
     data class OnSelectedListChange(val shoppingList: ShoppingList): ShoppingListDetailAction
 }

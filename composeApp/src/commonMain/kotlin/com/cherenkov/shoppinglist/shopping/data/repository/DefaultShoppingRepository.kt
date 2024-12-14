@@ -106,6 +106,15 @@ class DefaultShoppingRepository(
         }
     }
 
+    override suspend fun deleteItem(list_id: Int, item_id: Int): Result<Boolean, DataError.Remote> {
+        remoteShoppingDataSource.deleteItem(list_id, item_id)
+            .onSuccess { return Result.Success(true)}
+            .onError { lists ->
+                return Result.Error(DataError.Remote.UNKNOWN)
+            }
+        return Result.Error(DataError.Remote.UNKNOWN)
+    }
+
     override suspend fun deleteAllShoppings(): EmptyResult<DataError.Local> {
         return try {
             shoppingListDao.deleteAllShoppingLists()
@@ -123,6 +132,15 @@ class DefaultShoppingRepository(
         } catch (e: SQLiteException){
             Result.Error(DataError.Local.UNKNOWN)
         }
+    }
+
+    override suspend fun crossOffItem(item_id: Int): Result<Boolean, DataError.Remote> {
+        remoteShoppingDataSource.crossItem(item_id)
+            .onSuccess { return Result.Success(true)}
+            .onError {
+                return Result.Error(DataError.Remote.UNKNOWN)
+            }
+        return Result.Error(DataError.Remote.UNKNOWN)
     }
 
     override suspend fun addShoppingList(name: String): Result<Boolean, DataError.Remote> {

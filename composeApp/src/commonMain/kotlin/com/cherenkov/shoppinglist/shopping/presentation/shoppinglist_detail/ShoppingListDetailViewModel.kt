@@ -3,6 +3,7 @@ package com.cherenkov.shoppinglist.shopping.presentation.shoppinglist_detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.toRoute
 import com.cherenkov.shoppinglist.app.Route
 import com.cherenkov.shoppinglist.core.domain.onError
@@ -54,7 +55,18 @@ class ShoppingListDetailViewModel(
             is ShoppingListDetailAction.OnAddClick -> {
 
             }
+            is ShoppingListDetailAction.OnRemoveClick -> {
+                deleteItem(item_id = action.item_id)
+                _state.update { currentState ->
+                    currentState.copy(
+                        listItems = currentState.listItems.filter { item ->
+                            item?.id != action.item_id
+                        }
+                    )
+                }
+            }
             is ShoppingListDetailAction.OnCheckClick -> {
+                crossItems(item_id = action.id)
                 _state.update { currentState ->
                     currentState.copy(
                         listItems = currentState.listItems.map { item ->
@@ -67,6 +79,18 @@ class ShoppingListDetailViewModel(
                     )
                 }
             }
+        }
+    }
+
+    private fun crossItems(item_id: Int){
+        viewModelScope.launch {
+            repository.crossOffItem(item_id)
+        }
+    }
+
+    private fun deleteItem(item_id: Int){
+        viewModelScope.launch {
+            repository.deleteItem(listId, item_id)
         }
     }
 

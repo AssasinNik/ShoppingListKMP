@@ -154,6 +154,9 @@ fun ContentWithItems(
                 if (action is ShoppingListDetailAction.OnCheckClick) {
                     onAction(action)
                 }
+                if (action is ShoppingListDetailAction.OnRemoveClick){
+                    onAction(action)
+                }
             }
         )
     }

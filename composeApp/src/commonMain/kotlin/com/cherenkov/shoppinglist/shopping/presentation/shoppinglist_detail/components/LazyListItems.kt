@@ -39,6 +39,9 @@ fun LazyListItems(
                     item = item,
                     onCheckedChange = {
                         onAction(ShoppingListDetailAction.OnCheckClick(item.id))
+                    },
+                    onRemoveClick = {
+                        onAction(ShoppingListDetailAction.OnRemoveClick(item_id = item.id))
                     }
                 )
             }

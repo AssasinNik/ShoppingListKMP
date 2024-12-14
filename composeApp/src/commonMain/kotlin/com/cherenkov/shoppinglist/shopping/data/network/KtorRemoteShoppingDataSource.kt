@@ -6,6 +6,7 @@ import com.cherenkov.shoppinglist.core.domain.Result
 import com.cherenkov.shoppinglist.shopping.data.dto.AddItemTOListDTO
 import com.cherenkov.shoppinglist.shopping.data.dto.AddShoppingListDTO
 import com.cherenkov.shoppinglist.shopping.data.dto.AuthenticateDTO
+import com.cherenkov.shoppinglist.shopping.data.dto.CrossItOffDTO
 import com.cherenkov.shoppinglist.shopping.data.dto.RemoveShoppingListDTO
 import com.cherenkov.shoppinglist.shopping.data.dto.UsersListItemsDTO
 import com.cherenkov.shoppinglist.shopping.data.dto.UsersShoppingListsDTO
@@ -57,6 +58,30 @@ class KtorRemoteShoppingDataSource(
             ){
                 parameter("key", key)
                 parameter("name", name)
+            }
+        }
+    }
+
+    override suspend fun deleteItem(
+        list_id: Int,
+        item_id: Int
+    ): Result<RemoveShoppingListDTO, DataError.Remote> {
+        return safeCall {
+            httpClient.get(
+                urlString = "$BASE_URL/RemoveFromList"
+            ) {
+                parameter("list_id", list_id)
+                parameter("item_id", item_id)
+            }
+        }
+    }
+
+    override suspend fun crossItem(id: Int): Result<CrossItOffDTO, DataError.Remote> {
+        return safeCall {
+            httpClient.get(
+                urlString = "$BASE_URL/CrossItOff"
+            ){
+                parameter("id", id)
             }
         }
     }
