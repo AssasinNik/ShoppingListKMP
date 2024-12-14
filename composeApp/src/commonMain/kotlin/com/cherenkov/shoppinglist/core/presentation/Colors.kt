@@ -8,4 +8,5 @@ val BackGroundItems = Color(0xFF454545)
 val BackGroundBox = Color(0xFF202020)
 val Rate = Color(0xFF1BAA29)
 val HeaderColor = Color(0xFFD2C2C2)
+val GrayDropDown = Color(0xFF3A3A3A)
 

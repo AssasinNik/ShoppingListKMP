@@ -40,6 +40,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cherenkov.shoppinglist.core.presentation.GrayDropDown
+import com.cherenkov.shoppinglist.core.presentation.Rate
 import com.cherenkov.shoppinglist.shopping.domain.ProductItem
 
 @Composable
@@ -86,7 +88,6 @@ fun ShoppingListItem(
                     textDecoration = if (item.isChecked) TextDecoration.LineThrough else TextDecoration.None
                 )
             }
-
             IconButton(
                 onClick = { isMenuExpanded = true },
                 modifier = Modifier
@@ -98,28 +99,27 @@ fun ShoppingListItem(
                     contentDescription = "Меню",
                     tint = Color.White
                 )
-            }
-
-            DropdownMenu(
-                expanded = isMenuExpanded,
-                onDismissRequest = { isMenuExpanded = false },
-                modifier = Modifier
-                    .background(Color.DarkGray, RoundedCornerShape(8.dp))
-            ) {
-                DropdownMenuItem(
-                    text = { Text("Удалить", color = MaterialTheme.colorScheme.error) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Удалить",
-                            tint = MaterialTheme.colorScheme.error
-                        )
-                    },
-                    onClick = {
-                        isMenuExpanded = false
-                        onRemoveClick()
-                    }
-                )
+                DropdownMenu(
+                    expanded = isMenuExpanded,
+                    onDismissRequest = { isMenuExpanded = false },
+                    modifier = Modifier
+                        .background(GrayDropDown)
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Удалить", color = MaterialTheme.colorScheme.error) },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Удалить",
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        },
+                        onClick = {
+                            isMenuExpanded = false
+                            onRemoveClick()
+                        }
+                    )
+                }
             }
         }
     }

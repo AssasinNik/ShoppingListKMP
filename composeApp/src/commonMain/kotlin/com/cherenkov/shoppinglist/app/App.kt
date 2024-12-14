@@ -123,14 +123,16 @@ fun App() {
                         ShoppingListDetailScreenRoot(
                             viewModel = viewModel,
                             onBackClick = {
-                                navController.navigate(
-                                    Route.ShoppingLists
-                                )
+                                navController.popBackStack()
                             },
                             onAddClick = {
                                 navController.navigate(
                                     Route.AddItem(selectedBook?.id ?: 0)
-                                )
+                                ){
+                                    popUpTo(Route.AddItem(selectedBook?.id ?: 0)){
+                                        inclusive = true
+                                    }
+                                }
                             }
                         )
                     }
@@ -170,7 +172,11 @@ fun App() {
                             onMoveClick = {
                                 navController.navigate(
                                     Route.ShoppingListDetail(selectedBook?.id ?: 0)
-                                )
+                                ){
+                                    popUpTo(Route.ShoppingListDetail(selectedBook?.id ?: 0)){
+                                        inclusive = true
+                                    }
+                                }
                             }
                         )
                     }

@@ -19,11 +19,11 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 class ShoppingListsViewModel(
     private val repository: ShoppingRepository
 ): ViewModel() {
-
 
     private val _state = MutableStateFlow(ShoppingListState())
     val state = _state
@@ -42,6 +42,9 @@ class ShoppingListsViewModel(
                 removeList(action.shoppingList)
             }
             is ShoppingListAction.OnFloatingButtonClick -> {
+
+            }
+            is ShoppingListAction.OnListClick -> {
 
             }
             else -> Unit
