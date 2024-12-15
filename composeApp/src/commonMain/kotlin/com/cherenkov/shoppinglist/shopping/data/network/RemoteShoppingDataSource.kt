@@ -5,6 +5,7 @@ import com.cherenkov.shoppinglist.core.domain.Result
 import com.cherenkov.shoppinglist.shopping.data.dto.AddItemTOListDTO
 import com.cherenkov.shoppinglist.shopping.data.dto.AddShoppingListDTO
 import com.cherenkov.shoppinglist.shopping.data.dto.AuthenticateDTO
+import com.cherenkov.shoppinglist.shopping.data.dto.CodeGenerationDTO
 import com.cherenkov.shoppinglist.shopping.data.dto.CrossItOffDTO
 import com.cherenkov.shoppinglist.shopping.data.dto.RemoveShoppingListDTO
 import com.cherenkov.shoppinglist.shopping.data.dto.UsersListItemsDTO
@@ -46,5 +47,7 @@ interface RemoteShoppingDataSource {
         value: String,
         n: Int
     ): Result<AddItemTOListDTO, DataError.Remote>
+
+    suspend fun generateCode(): Result<CodeGenerationDTO, DataError.Remote>
 
 }

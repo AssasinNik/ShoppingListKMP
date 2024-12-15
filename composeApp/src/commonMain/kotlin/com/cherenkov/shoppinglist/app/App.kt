@@ -26,6 +26,9 @@ import com.cherenkov.shoppinglist.shopping.presentation.add_item.AddItemScreenRo
 import com.cherenkov.shoppinglist.shopping.presentation.add_item.AddItemViewModel
 import com.cherenkov.shoppinglist.shopping.presentation.authentication.AuthenticationScreenRoot
 import com.cherenkov.shoppinglist.shopping.presentation.authentication.AuthenticationViewModel
+import com.cherenkov.shoppinglist.shopping.presentation.code_generation.CodeGenerationScreen
+import com.cherenkov.shoppinglist.shopping.presentation.code_generation.CodeGenerationScreenRoot
+import com.cherenkov.shoppinglist.shopping.presentation.code_generation.CodeGenerationViewModel
 import com.cherenkov.shoppinglist.shopping.presentation.create_shopping_list.CreateShoppingScreenRoot
 import com.cherenkov.shoppinglist.shopping.presentation.create_shopping_list.CreateShoppingViewModel
 import com.cherenkov.shoppinglist.shopping.presentation.shopping_lists.ShoppingListsScreenRoot
@@ -33,6 +36,7 @@ import com.cherenkov.shoppinglist.shopping.presentation.shopping_lists.ShoppingL
 import com.cherenkov.shoppinglist.shopping.presentation.shoppinglist_detail.ShoppingListDetailAction
 import com.cherenkov.shoppinglist.shopping.presentation.shoppinglist_detail.ShoppingListDetailScreenRoot
 import com.cherenkov.shoppinglist.shopping.presentation.shoppinglist_detail.ShoppingListDetailViewModel
+import io.ktor.util.valuesOf
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -66,7 +70,20 @@ fun App() {
                             onSetCodeClick = {
                                 navController.navigate(
                                     Route.ShoppingLists
-                                )
+                                ){
+                                    popUpTo(Route.ShoppingLists){
+                                        inclusive = true
+                                    }
+                                }
+                            },
+                            onNoCodeClick = {
+                                navController.navigate(
+                                    Route.CreateKey
+                                ){
+                                    popUpTo(Route.CreateKey){
+                                        inclusive = true
+                                    }
+                                }
                             }
                         )
                     }
@@ -136,6 +153,39 @@ fun App() {
                             }
                         )
                     }
+
+                    composable<Route.CreateKey>(
+                        enterTransition = { slideInHorizontally { initialOffset ->
+                            initialOffset
+                        } },
+                        exitTransition = { slideOutHorizontally { initialOffset ->
+                            initialOffset
+                        } }
+                    ) {
+                        val viewModel = koinViewModel<CodeGenerationViewModel>()
+                        CodeGenerationScreenRoot(
+                            viewModel = viewModel,
+                            onNextScreenClick = {
+                                navController.navigate(
+                                    Route.ShoppingLists
+                                ){
+                                    popUpTo(Route.ShoppingLists){
+                                        inclusive = true
+                                    }
+                                }
+                            },
+                            onAlreadyHaveCodeClicked = {
+                                navController.navigate(
+                                    Route.Authentication
+                                ){
+                                    popUpTo(Route.Authentication){
+                                        inclusive = true
+                                    }
+                                }
+                            }
+                        )
+                    }
+
                     composable<Route.CreateShopping>(
                         enterTransition = { slideInHorizontally { initialOffset ->
                             initialOffset

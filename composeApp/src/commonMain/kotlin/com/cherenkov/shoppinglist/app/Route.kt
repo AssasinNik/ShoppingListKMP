@@ -22,4 +22,7 @@ sealed interface Route {
     @Serializable
     data class AddItem(val id: Int): Route
 
+    @Serializable
+    data object CreateKey: Route
+
 }

@@ -4,4 +4,5 @@ sealed interface AuthenticationAction {
     data object SetCodeNextScreen: AuthenticationAction
     data class SetCodeClick(val code: String) : AuthenticationAction
     data class onValueTextChange(val code: String): AuthenticationAction
+    data object OnNoCodeClick: AuthenticationAction
 }

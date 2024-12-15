@@ -166,7 +166,8 @@ fun CreateShoppingScreen(
                 if (state.isLoading){
                     CircularProgressIndicator(
                         color = Color.White,
-                        modifier = Modifier.size(40.dp)
+                        modifier = Modifier.size(20.dp),
+                        strokeWidth = 2.dp
                     )
                 }
                 else{

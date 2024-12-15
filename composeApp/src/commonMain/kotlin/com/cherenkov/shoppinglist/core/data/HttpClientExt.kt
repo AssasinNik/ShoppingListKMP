@@ -2,10 +2,12 @@ package com.cherenkov.shoppinglist.core.data
 
 import com.cherenkov.shoppinglist.core.domain.DataError
 import com.cherenkov.shoppinglist.core.domain.Result
+import com.cherenkov.shoppinglist.shopping.data.dto.CodeGenerationDTO
 import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.call.body
 import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.coroutines.ensureActive
 import kotlin.coroutines.coroutineContext
@@ -29,18 +31,28 @@ suspend inline fun <reified T> safeCall(
 
 suspend inline fun <reified T> responseToResult(
     response: HttpResponse
-): Result<T, DataError.Remote>{
-    return when(response.status.value){
-        in 200 .. 299 -> {
+): Result<T, DataError.Remote> {
+    return when (response.status.value) {
+        in 200..299 -> {
             try {
                 Result.Success(response.body<T>())
-            }catch (e: NoTransformationFoundException){
-                Result.Error(DataError.Remote.SERIALIZATION)
+            } catch (e: NoTransformationFoundException) {
+                try {
+                    val text = response.bodyAsText()
+                    if (T::class == CodeGenerationDTO::class) {
+                        val dto = CodeGenerationDTO(code = text) as T
+                        Result.Success(dto)
+                    } else {
+                        Result.Error(DataError.Remote.SERIALIZATION)
+                    }
+                } catch (e: Exception) {
+                    Result.Error(DataError.Remote.SERIALIZATION)
+                }
             }
         }
         408 -> Result.Error(DataError.Remote.REQUEST_TIMEOUT)
         429 -> Result.Error(DataError.Remote.TOO_MANY_REQUESTS)
-        in 500 .. 599 -> Result.Error(DataError.Remote.SERVER)
+        in 500..599 -> Result.Error(DataError.Remote.SERVER)
         else -> Result.Error(DataError.Remote.UNKNOWN)
     }
 }

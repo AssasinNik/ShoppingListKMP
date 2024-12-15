@@ -11,6 +11,7 @@ import com.cherenkov.shoppinglist.shopping.domain.ShoppingRepository
 import com.cherenkov.shoppinglist.shopping.presentation.SelectedListViewModel
 import com.cherenkov.shoppinglist.shopping.presentation.add_item.AddItemViewModel
 import com.cherenkov.shoppinglist.shopping.presentation.authentication.AuthenticationViewModel
+import com.cherenkov.shoppinglist.shopping.presentation.code_generation.CodeGenerationViewModel
 import com.cherenkov.shoppinglist.shopping.presentation.create_shopping_list.CreateShoppingViewModel
 import com.cherenkov.shoppinglist.shopping.presentation.shopping_lists.ShoppingListsViewModel
 import com.cherenkov.shoppinglist.shopping.presentation.shoppinglist_detail.ShoppingListDetailViewModel
@@ -35,6 +36,7 @@ val sharedModule = module {
 
     single { get<ShoppingListsDatabase>().shoppingListDao }
 
+    viewModelOf(::CodeGenerationViewModel)
     viewModelOf(::CreateShoppingViewModel)
     viewModelOf(::ShoppingListsViewModel)
     viewModelOf(::AuthenticationViewModel)

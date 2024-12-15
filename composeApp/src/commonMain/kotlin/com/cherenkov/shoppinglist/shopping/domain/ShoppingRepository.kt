@@ -15,6 +15,7 @@ interface ShoppingRepository {
     fun getItemsStream(id: Int): Flow<List<ProductItem>>
     suspend fun deleteItem(list_id: Int, item_id: Int): Result<Boolean, DataError.Remote>
     suspend fun crossOffItem(item_id: Int): Result<Boolean, DataError.Remote>
+    suspend fun generateCode(): Result<String, DataError.Remote>
 
     suspend fun getShoppingsFromLocal(): Flow<List<ShoppingList>>
     suspend fun addShopping(shoppingList: ShoppingList): EmptyResult<DataError.Local>

@@ -165,6 +165,19 @@ class DefaultShoppingRepository(
         return Result.Error(DataError.Remote.UNKNOWN)
     }
 
+    override suspend fun generateCode(): Result<String, DataError.Remote> {
+        remoteShoppingDataSource.generateCode().map { code ->
+            if (code.code!=""){
+                shoppingListDao.insertAuthCode(UserEntity(0, code.code))
+                return Result.Success(code.code)
+            }
+            else{
+                return Result.Error(DataError.Remote.UNKNOWN)
+            }
+        }
+        return Result.Error(DataError.Remote.UNKNOWN)
+    }
+
     override suspend fun authenticateUser(key: String): Result<Boolean, DataError.Remote> {
         remoteShoppingDataSource.authenticateWithKey(key)
             .map { list ->

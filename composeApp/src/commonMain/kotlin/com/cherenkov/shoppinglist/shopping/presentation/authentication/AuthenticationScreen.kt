@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -24,10 +25,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -40,7 +45,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun AuthenticationScreenRoot(
     viewModel: AuthenticationViewModel = koinViewModel(),
-    onSetCodeClick: () -> Unit
+    onSetCodeClick: () -> Unit,
+    onNoCodeClick: () -> Unit
 ){
     val state by viewModel.state.collectAsStateWithLifecycle()
     val authenticationStatus by viewModel.authenticationStatus.collectAsStateWithLifecycle()
@@ -50,6 +56,7 @@ fun AuthenticationScreenRoot(
         onAction = { action ->
             when(action){
                 is AuthenticationAction.SetCodeNextScreen -> onSetCodeClick()
+                is AuthenticationAction.OnNoCodeClick -> onNoCodeClick()
                 else -> Unit
             }
             viewModel.onAction(action)
@@ -98,7 +105,8 @@ fun AuthenticationScreen(
                 onAction(AuthenticationAction.onValueTextChange(it))
             },
             label = { Text("Authentication Code") },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             singleLine = true,
             isError = errorMessage != null,
             colors = OutlinedTextFieldDefaults.colors(
@@ -131,22 +139,20 @@ fun AuthenticationScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
-            onClick = {
-                onAction(AuthenticationAction.SetCodeClick(state.code))
-                      },
+            onClick = { onAction(AuthenticationAction.SetCodeClick(state.code)) },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Buttons
             ),
             shape = RoundedCornerShape(8.dp)
         ) {
-            if (state.isLoading){
+            if (state.isLoading) {
                 CircularProgressIndicator(
                     color = Color.White,
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.size(20.dp),
+                    strokeWidth = 2.dp
                 )
-            }
-            else{
+            } else {
                 Text(
                     text = "Authenticate",
                     color = Color.White,
@@ -154,6 +160,29 @@ fun AuthenticationScreen(
                 )
             }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        val annotatedText = buildAnnotatedString {
+            withStyle(style = SpanStyle(color = HeaderColor)) {
+                append("No code? ")
+            }
+            pushStringAnnotation(tag = "generate", annotation = "generate")
+            withStyle(style = SpanStyle(color = Buttons, fontWeight = FontWeight.Bold)) {
+                append("Generate")
+            }
+            pop()
+        }
+
+        ClickableText(
+            text = annotatedText,
+            style = MaterialTheme.typography.bodyMedium,
+            onClick = {
+                annotatedText.getStringAnnotations("generate", it, it).firstOrNull()?.let {
+                    onAction(AuthenticationAction.OnNoCodeClick)
+                }
+            }
+        )
     }
 }
 
