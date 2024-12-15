@@ -240,7 +240,8 @@ fun CodeGenerationScreen(
                             enter = fadeIn(),
                             exit = fadeOut()
                         ),
-                    colors = ButtonDefaults.buttonColors(containerColor = buttonsColor)
+                    colors = ButtonDefaults.buttonColors(containerColor = buttonsColor),
+                    shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(
                         text = "Generate",
